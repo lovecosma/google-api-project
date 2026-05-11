@@ -1,5 +1,15 @@
 require('dotenv').config();
+const { createGmailClient } = require('./src/gmail/client');
+const { fetchUnreadEmails } = require('./src/services/fetchUnreadEmails');
 
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+async function main() {
+  const gmail = createGmailClient();
+  const emails = await fetchUnreadEmails(gmail);
+  console.log(`Fetched ${emails.length} unread email(s):`);
+  console.log(JSON.stringify(emails, null, 2));
+}
 
-console.log('Google API Key loaded:', GOOGLE_API_KEY ? 'yes' : 'no');
+main().catch(err => {
+  console.error('Error:', err.message);
+  process.exit(1);
+});
